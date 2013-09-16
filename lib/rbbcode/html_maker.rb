@@ -13,10 +13,10 @@ module RbbCode
 		'list' => 'ul',
 		'*' => 'li'
 	}
-	
+
 	class HtmlMaker
 		include SanitizeUrl
-		
+
 		def make_html(node)
 			output = ''
 			case node
@@ -26,7 +26,7 @@ module RbbCode
 				end
 			when RbbCode::TagNode
 				custom_tag_method = "html_from_#{node.tag_name}_tag"
-				if respond_to?(custom_tag_method)
+				if respond_to?(custom_tag_method, true)
 					output << send(custom_tag_method, node)
 				else
 					inner_html = ''
@@ -47,9 +47,9 @@ module RbbCode
 			end
 			output
 		end
-		
+
 		protected
-		
+
 		def content_tag(tag_name, contents, attributes = {})
 			output = "<#{tag_name}"
 			attributes.each do |attr, value|
@@ -61,7 +61,7 @@ module RbbCode
 				output << ">#{contents}</#{tag_name}>"
 			end
 		end
-		
+
 		def html_from_img_tag(node)
 			src = sanitize_url(node.inner_bb_code)
 			content_tag('img', nil, {'src' => src, 'alt' => ''})
@@ -79,7 +79,7 @@ module RbbCode
 			end
 			content_tag('a', inner_html, {'href' => url})
 		end
-		
+
 		def map_tag_name(tag_name)
 			unless DEFAULT_TAG_MAPPINGS.has_key?(tag_name)
 				raise "No tag mapping for '#{tag_name}'"
